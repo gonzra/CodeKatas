@@ -53,17 +53,11 @@ public class FunctionalInterfaceTest
         var strings = List.of("one", "two", "three");
 
         // TODO - Can you remove the final keyword from the variable below?
-        final var result = new ArrayList<String>();
+        var result = new ArrayList<String>();
 
         // TODO - Convert the anonymous inner class to a lambda
-        var consumer = new Consumer<String>()
-        {
-            @Override
-            public void accept(String each)
-            {
-                result.add(each.toUpperCase());
-            }
-        };
+        Consumer<String> consumer = each -> result.add(each.toUpperCase());
+
         consumer.accept("zero");
         Assert.assertEquals(List.of("ZERO"), result);
         strings.forEach(consumer);
@@ -75,15 +69,8 @@ public class FunctionalInterfaceTest
     {
         var numbers = IntStream.rangeClosed(1, 10).boxed().collect(Collectors.toList());
 
-        // TODO - Convert the anonymous inner class to a lambda
-        var evenPredicate = new Predicate<Integer>()
-        {
-            @Override
-            public boolean test(Integer integer)
-            {
-                return integer % 2 == 0;
-            }
-        };
+        Predicate<Integer> evenPredicate = integer -> integer % 2 == 0;
+
         Assert.assertTrue(evenPredicate.test(2));
         Assert.assertFalse(evenPredicate.test(1));
         var evens = numbers.stream().filter(evenPredicate).collect(Collectors.toList());
@@ -98,15 +85,8 @@ public class FunctionalInterfaceTest
     {
         var numbers = IntStream.rangeClosed(1, 10).boxed().collect(Collectors.toList());
 
-        // TODO - Convert the anonymous inner class to a lambda
-        var oddPredicate = new Predicate<Integer>()
-        {
-            @Override
-            public boolean test(Integer integer)
-            {
-                return integer % 2 == 1;
-            }
-        };
+        Predicate<Integer> oddPredicate = integer -> integer % 2 == 1;
+
         Assert.assertFalse(oddPredicate.test(2));
         Assert.assertTrue(oddPredicate.test(1));
         var odds = numbers.stream().filter(oddPredicate).collect(Collectors.toList());
@@ -120,14 +100,8 @@ public class FunctionalInterfaceTest
     public void function()
     {
         // TODO - Convert the anonymous inner class to a lambda and then a method reference
-        var toUppercase = new Function<String, String>()
-        {
-            @Override
-            public String apply(String s)
-            {
-                return s.toUpperCase();
-            }
-        };
+        Function<String, String> toUppercase = String::toUpperCase;
+
         Assert.assertEquals("UPPERCASE", toUppercase.apply("uppercase"));
         List<String> lowercase = List.of("a", "b", "c", "d");
         Set<String> uppercase = lowercase.stream().map(toUppercase).collect(Collectors.toSet());
@@ -138,14 +112,7 @@ public class FunctionalInterfaceTest
     public void supplier()
     {
         // TODO - Convert this anonymous inner class to a lambda and then to a constructor reference
-        var supplier = new Supplier<List<String>>()
-        {
-            @Override
-            public List<String> get()
-            {
-                return new CopyOnWriteArrayList<String>();
-            }
-        };
+        Supplier<List<String>>  supplier = CopyOnWriteArrayList::new;
         Assert.assertEquals(new CopyOnWriteArrayList<>(), supplier.get());
         Assert.assertNotSame(supplier.get(), supplier.get());
         List<String> list = Stream.of("1", "2", "3").collect(Collectors.toCollection(supplier));
@@ -156,15 +123,9 @@ public class FunctionalInterfaceTest
     public void biConsumer()
     {
         var result = new HashMap<String, String>();
-        // TODO - Convert the anonymous inner class to a lambda
-        var biConsumer = new BiConsumer<String, String>()
-        {
-            @Override
-            public void accept(String key, String value)
-            {
-                result.put(key.toUpperCase(), value.toUpperCase());
-            }
-        };
+
+        BiConsumer<String, String> biConsumer = (key, value) -> result.put(key.toUpperCase(), value.toUpperCase());
+
         biConsumer.accept("a", "one");
         Assert.assertEquals(Map.of("A", "ONE"), result);
 
@@ -178,15 +139,9 @@ public class FunctionalInterfaceTest
     @Test
     public void unaryOperator()
     {
-        // TODO - Convert the anonymous inner class to a lambda
-        var squared = new UnaryOperator<Integer>()
-        {
-            @Override
-            public Integer apply(Integer integer)
-            {
-                return integer * integer;
-            }
-        };
+        
+        UnaryOperator<Integer> squared = (integer) -> integer * integer;
+
         Assert.assertEquals(Integer.valueOf(4), squared.apply(2));
         Assert.assertEquals(Integer.valueOf(9), squared.apply(3));
         Assert.assertEquals(Integer.valueOf(16), squared.apply(4));
