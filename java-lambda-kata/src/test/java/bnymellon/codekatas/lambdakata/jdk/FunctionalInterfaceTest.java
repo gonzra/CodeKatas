@@ -99,7 +99,6 @@ public class FunctionalInterfaceTest
     @Test
     public void function()
     {
-        // TODO - Convert the anonymous inner class to a lambda and then a method reference
         Function<String, String> toUppercase = String::toUpperCase;
 
         Assert.assertEquals("UPPERCASE", toUppercase.apply("uppercase"));
@@ -111,7 +110,6 @@ public class FunctionalInterfaceTest
     @Test
     public void supplier()
     {
-        // TODO - Convert this anonymous inner class to a lambda and then to a constructor reference
         Supplier<List<String>>  supplier = CopyOnWriteArrayList::new;
         Assert.assertEquals(new CopyOnWriteArrayList<>(), supplier.get());
         Assert.assertNotSame(supplier.get(), supplier.get());
@@ -147,13 +145,6 @@ public class FunctionalInterfaceTest
         Assert.assertEquals(Integer.valueOf(16), squared.apply(4));
 
         // TODO - Convert the anonymous inner class to a lambda
-        Assert.assertTrue(Stream.iterate(2, squared).anyMatch(new Predicate<Integer>()
-        {
-            @Override
-            public boolean test(Integer i)
-            {
-                return i.equals(Integer.valueOf(256));
-            }
-        }));
+        Assert.assertTrue(Stream.iterate(2, squared).anyMatch(i -> i.equals(Integer.valueOf(256))));
     }
 }

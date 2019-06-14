@@ -39,15 +39,9 @@ public class PrimitiveFunctionalInterfaceTest
     public void IntConsumer()
     {
         var adder = new LongAdder();
-        // TODO - Convert the anonymous inner class to a lambda
-        var consumer = new IntConsumer()
-        {
-            @Override
-            public void accept(int value)
-            {
-                adder.add((long)value);
-            }
-        };
+
+        IntConsumer consumer = value -> adder.add((long) value);
+
         IntStream.rangeClosed(1, 5).forEach(consumer);
         Assert.assertEquals(15, adder.longValue());
     }
@@ -56,15 +50,9 @@ public class PrimitiveFunctionalInterfaceTest
     public void LongConsumer()
     {
         var adder = new LongAdder();
-        // TODO - Convert the anonymous inner class to a lambda
-        var consumer = new LongConsumer()
-        {
-            @Override
-            public void accept(long value)
-            {
-                adder.add(value);
-            }
-        };
+
+        LongConsumer consumer = adder::add;
+
         LongStream.rangeClosed(1, 5).forEach(consumer);
         Assert.assertEquals(15, adder.longValue());
     }
@@ -73,15 +61,8 @@ public class PrimitiveFunctionalInterfaceTest
     public void DoubleConsumer()
     {
         var adder = new DoubleAdder();
-        // TODO - Convert the anonymous inner class to a lambda
-        var consumer = new DoubleConsumer()
-        {
-            @Override
-            public void accept(double value)
-            {
-                adder.add(value);
-            }
-        };
+
+        DoubleConsumer consumer = adder::add;
         DoubleStream.of(1.0, 2.0, 3.0, 4.0, 5.0).forEach(consumer);
         Assert.assertEquals(15.0, adder.doubleValue(), 0.0);
     }
@@ -89,15 +70,8 @@ public class PrimitiveFunctionalInterfaceTest
     @Test
     public void IntPredicate()
     {
-        // TODO - Convert the anonymous inner class to a lambda
-        var predicate = new IntPredicate()
-        {
-            @Override
-            public boolean test(int value)
-            {
-                return value % 2 == 0;
-            }
-        };
+        IntPredicate predicate = value -> value % 2 == 0;
+
         var evens = IntStream.rangeClosed(1, 5).filter(predicate).boxed().collect(Collectors.toList());
         Assert.assertEquals(Arrays.asList(2, 4), evens);
         var odds = IntStream.rangeClosed(1, 5).filter(predicate.negate()).boxed().collect(Collectors.toList());
