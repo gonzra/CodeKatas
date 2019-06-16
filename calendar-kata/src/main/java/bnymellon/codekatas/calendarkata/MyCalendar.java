@@ -16,18 +16,12 @@
 
 package bnymellon.codekatas.calendarkata;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.Month;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.TimeZone;
 
 import org.eclipse.collections.api.RichIterable;
 import org.eclipse.collections.api.block.function.Function2;
+import org.eclipse.collections.api.block.predicate.Predicate;
 import org.eclipse.collections.api.block.predicate.Predicate2;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.multimap.sortedset.MutableSortedSetMultimap;
@@ -93,7 +87,11 @@ public class MyCalendar
      */
     public boolean hasOverlappingMeeting(LocalDate date, LocalTime startTime, Duration duration)
     {
-        return false;
+        Interval interval  = Interval.of(
+                LocalDateTime.of(date,startTime)
+                        .atZone(this.getZoneId())
+                        .toInstant(), duration);
+        return this.getMeetingsForDate(date).anySatisfy((Predicate<Meeting>) meeting -> meeting.getInterval().overlaps(interval));
     }
 
     /**
@@ -109,7 +107,28 @@ public class MyCalendar
      */
     public MutableList<Interval> getAvailableTimeslots(LocalDate date)
     {
-        return Lists.mutable.empty();
+        SortedSetIterable<Meeting> meetingsForDate = this.getMeetingsForDate(date);
+        MutableList<Interval> result = Lists.mutable.empty();
+
+        LocalTime currenIntervalStart = LocalTime.MIN;
+        LocalTime end = LocalTime.MAX;
+
+        for (Meeting currentMeeting : meetingsForDate) {
+            if (!currentMeeting.getStartTime().equals(currenIntervalStart)){
+                result.add(createInterval(date, currenIntervalStart, currentMeeting.getStartTime(), ZoneOffset.UTC));
+            }
+            currenIntervalStart = currentMeeting.getEndTime();
+        }
+
+        //Take care of last interval
+        result.add(Interval.of(Instant.ofEpochSecond(currenIntervalStart.toEpochSecond(date, ZoneOffset.UTC)),
+                Instant.ofEpochSecond(end.toEpochSecond(date, ZoneOffset.UTC))));
+        return result;
+    }
+
+    private Interval createInterval(LocalDate date, LocalTime start, LocalTime end, ZoneOffset zoneOffset) {
+        return Interval.of(Instant.ofEpochSecond(start.toEpochSecond(date, zoneOffset)),
+                Instant.ofEpochSecond(end.toEpochSecond(date,zoneOffset)));
     }
 
     @Override
